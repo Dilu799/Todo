@@ -5,13 +5,12 @@ export default class TodoApp extends Component {
     render() {
         return (
             <div className='todo-container'>
+                <form className='input-section'>
                 <h1>Todo App</h1>
-                <div className='input-section'>
-                    <input type="text" name="" id="" />
-                    <button>Add</button>
-                </div>
+                    <input type="text" placeholder='Enter your wish' />
+                </form>
                 <ul>
-                    <li>Items</li>
+                    <li>Items <i className='fas fa-trash-alt'></i></li>
                 </ul>
             </div>
         )
