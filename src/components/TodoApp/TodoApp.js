@@ -30,13 +30,17 @@ export default class TodoApp extends Component {
 
     editItem = (index)=>{
         let wish = prompt('Edit your wish!',this.state.items.filter((data,key)=>key === index))
+        let key = this.state.items.findIndex((k)=> k === index)
+        console.log(key, wish);
 
-        if(wish != null){
+        if(wish == null){
+            this.setState({
+                items: [...this.state.items]
+            })
+        }else{
             this.setState({
                 items: [...this.state.items,this.state.items[index] = wish]
             })
-        }else{
-            
         }
     }
 
