@@ -1,64 +1,61 @@
-import React, { Component } from 'react'
-import './TodoApp.css'
+import React,{useEffect,useState} from 'react'
+import  '../../App.css';
+import CreateTask from '../Modals/CreateTask';
+import Card from '../Card/Card';
 
-export default class TodoApp extends Component {
-    state = {
-        input: '',
-        items: []
-    }
-    handleChange = (event) => {
-        this.setState({
-            input: event.target.value
-        })
-    }
+function TodoApp() {
 
-    storeItems = (e) => {
-        e.preventDefault();
-        const { input } = this.state;
-
-        this.setState({
-            items: [...this.state.items, input],
-            input: ''
-        })
-    }
-
-    deleteItem = (index) => {
-        this.setState({
-            items: this.state.items.filter((data, key) => key !== index)
-        })
-    }
-
-    editItem = (index)=>{
-        let wish = prompt('Edit your wish!',this.state.items.filter((data,key)=>key === index))
-        let key = this.state.items.findIndex((k)=> k === index)
-        console.log(key, wish);
-
-        if(wish == null){
-            this.setState({
-                items: [...this.state.items]
-            })
-        }else{
-            this.setState({
-                items: [...this.state.items,this.state.items[index] = wish]
-            })
+    const [modal, setModal] = useState(false);
+    const [taskList, setTaskList] =useState([]);
+    
+    useEffect(()=>{
+        let arr = localStorage.getItem('taskList');
+        if(arr){
+            let obj = JSON.parse(arr)
+            setTaskList(obj)
         }
+    },[])
+
+    const deleteTask = (index)=>{
+        let tempList = taskList
+        tempList.splice(index,1)
+        setTaskList(tempList)
+        localStorage.setItem('taskList',JSON.stringify(tempList))
+        window.location.reload()
     }
 
-    render() {
-        const { input, items } = this.state;
-        console.log(items);
-        return (
-            <div className='todo-container'>
-                <form className='input-section' onSubmit={this.storeItems}>
-                    <h1>Todo App</h1>
-                    <input type="text" onChange={this.handleChange} value={input} placeholder='Enter your wish' />
-                </form>
-                <ul>
-                    {items.map((data, index) => (
-                        <li key={index}>{data}<i className="fas fa-edit" onClick={() => this.editItem(index)}></i><i className='fas fa-trash-alt' onClick={() => this.deleteItem(index)}></i></li>
-                    ))}
-                </ul>
-            </div>
-        )
+    const updateListArray = (obj,index)=>{
+        let tempList = taskList;
+        tempList[index] = obj;
+        localStorage.setItem('taskList',JSON.stringify(tempList));
+        setTaskList(tempList);
+        window.location.reload();
     }
+
+    const toggle = ()=>{
+        setModal(!modal);
+    }
+
+    const saveTask = (taskObj)=>{
+        let tempList = taskList;
+        tempList.push(taskObj)
+        localStorage.setItem('taskList',JSON.stringify(tempList))
+        setTaskList(taskList)
+        setModal(false)
+    }
+
+    return (
+        <>
+        <div className='header text-center'>
+            <h3>Todo App</h3>
+            <button className='btn btn-danger mt-2' onClick={()=> setModal(true)}>Create Task</button>
+        </div>
+        <div className="task-container">
+        { taskList.map((obj,index)=><Card taskObj = {obj} index = {index} deleteTask = {deleteTask} updateListArray = {updateListArray} />)}
+        </div>
+        <CreateTask toggle={toggle} modal={modal} save={saveTask}/>
+        </>
+    )
 }
+
+export default TodoApp
